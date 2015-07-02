@@ -15,8 +15,9 @@ public class Project {
      * configuration.
      *
      * @return the result of the build
+     * @throws JobExportException if some jobs failed to be exported
      */
-    public BuildResult export(JobExporterConfigBuilder configBuilder) {
+    public BuildResult export(JobExporterConfigBuilder configBuilder) throws JobExportException {
         return export(configBuilder.build());
     }
 
@@ -25,8 +26,9 @@ public class Project {
      * configuration.
      *
      * @return the result of the build
+     * @throws JobExportException if some jobs failed to be exported
      */
-    public BuildResult export(JobExporterConfig config) {
+    public BuildResult export(JobExporterConfig config) throws JobExportException {
         return new JobExporter(config).export();
     }
 }

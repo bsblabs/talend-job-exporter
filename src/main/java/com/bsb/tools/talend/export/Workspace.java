@@ -40,8 +40,10 @@ public final class Workspace {
 
     /**
      * Initializes and returns a new Talend workspace representation.
+     *
+     * @throws WorkspaceInitializationException if the workspace failed to be initialized
      */
-    public static Workspace initializeWorkspace(){
+    public static Workspace initializeWorkspace() throws WorkspaceInitializationException {
         CommonsPlugin.setHeadless(true);
 
         final RepositoryContext repositoryContext = new RepositoryContext();
@@ -58,16 +60,16 @@ public final class Workspace {
      * Logs on the project having the specified name and and located in the current workspace.
      * If the project has not been imported in the workspace yet then it's automatically imported.
      *
-     * @throws IllegalArgumentException if the specified project does not exist
+     * @throws ProjectImportException if the project failed to be imported
      */
-    public com.bsb.tools.talend.export.Project useProject(String projectName) {
+    public com.bsb.tools.talend.export.Project useProject(String projectName) throws ProjectImportException {
         Project project = getProject(repositoryFactory, projectName);
         if (project == null) {
             project = importProject(repositoryFactory, projectName);
         }
 
         if (project == null) {
-            throw new IllegalArgumentException("Cannot find the project [" + projectName + "].");
+            throw new ProjectImportException("Cannot find the project [" + projectName + "].");
         }
 
         repositoryContext.setProject(project);
@@ -75,7 +77,7 @@ public final class Workspace {
         try {
             ProxyRepositoryFactory.getInstance().logOnProject(project, new NullProgressMonitor());
         } catch (LoginException | PersistenceException e) {
-            throw new IllegalStateException("Cannot login on project [" + project + "].", e);
+            throw new ProjectImportException("Cannot login on project [" + project + "].", e);
         }
 
         return new com.bsb.tools.talend.export.Project();
@@ -83,8 +85,10 @@ public final class Workspace {
 
     /**
      * Initializes a new repository factory.
+     *
+     * @throws WorkspaceInitializationException if the workspace failed to be initialized
      */
-    private static ProxyRepositoryFactory initializeRepositoryFactory() {
+    private static ProxyRepositoryFactory initializeRepositoryFactory() throws WorkspaceInitializationException {
         final IRepositoryFactory repositoryById =
               RepositoryFactoryProvider.getRepositoriyById(RepositoryConstants.REPOSITORY_LOCAL_ID);
 
@@ -96,7 +100,7 @@ public final class Workspace {
 
             return repositoryFactory;
         } catch (PersistenceException e) {
-            throw new IllegalStateException("Error while initializing repository [" + repositoryById + "].", e);
+            throw new WorkspaceInitializationException("Error while initializing repository [" + repositoryById + "].", e);
         }
     }
 
@@ -105,8 +109,9 @@ public final class Workspace {
      * the specified name.
      *
      * @return the project, or <tt>null</tt> if not found
+     * @throws ProjectImportException if the project failed to be imported
      */
-    private static Project getProject(ProxyRepositoryFactory repositoryFactory, String projectName) {
+    private static Project getProject(ProxyRepositoryFactory repositoryFactory, String projectName) throws ProjectImportException {
         try {
             final Project[] projects = repositoryFactory.readProject();
 
@@ -118,7 +123,7 @@ public final class Workspace {
 
             return null;
         } catch (PersistenceException | BusinessException e) {
-            throw new IllegalStateException("Error while initializing repository.", e);
+            throw new ProjectImportException("Error while reading workspace projects.", e);
         }
     }
 
@@ -138,15 +143,15 @@ public final class Workspace {
      *
      * @param repositoryFactory the factory to use
      * @param projectName the specified name
-     * @throws IllegalArgumentException if the project has not been found
+     * @throws ProjectImportException if the project failed to be imported
      */
-    private static Project importProject(ProxyRepositoryFactory repositoryFactory, String projectName) {
+    private static Project importProject(ProxyRepositoryFactory repositoryFactory, String projectName) throws ProjectImportException {
         final String projectPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + projectName;
 
         try {
             ImportProjectsUtilities.importProjectAs(new Shell(), projectName, projectName, projectPath, new NullProgressMonitor());
         } catch (InvocationTargetException | InterruptedException e) {
-            throw new IllegalStateException("Error while importing project [" + projectName + "].", e);
+            throw new ProjectImportException("Error while importing project [" + projectName + "].", e);
         }
 
         return getProject(repositoryFactory, projectName);

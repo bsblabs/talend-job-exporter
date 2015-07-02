@@ -46,9 +46,9 @@ public class JobExporter {
      * Exports the Talend job to an archive file according to the current
      * {@link JobExporterConfig}.
      *
-     * @throws IllegalStateException if some jobs have not been built
+     * @throws JobExportException if some jobs failed to be exported
      */
-    public BuildResult export() {
+    public BuildResult export() throws JobExportException {
         final List<RepositoryNode> nodes = ProjectNodeUtils.findJobsByPath(jobExporterConfig.getJobsToExport());
 
         try {
@@ -60,15 +60,15 @@ public class JobExporter {
             jobExportAction.run(new NullProgressMonitor());
 
             return new BuildResult(jobExportAction.isBuildSuccessful(), getIssues(nodes));
-        } catch (InterruptedException | InvocationTargetException e) {
-            throw new IllegalStateException("Error while exporting job.", e);
+        } catch (InterruptedException | InvocationTargetException | CoreException | SystemException e) {
+            throw new JobExportException("Error while exporting jobs.", e);
         }
     }
 
     /**
      * Returns the issues occurred during the build of the specified nodes.
      */
-    private List<BuildIssue> getIssues(List<RepositoryNode> nodes) {
+    private List<BuildIssue> getIssues(List<RepositoryNode> nodes) throws CoreException, SystemException {
         final List<BuildIssue> issues = new ArrayList<>();
 
         for (RepositoryNode node : nodes) {
@@ -101,13 +101,9 @@ public class JobExporter {
     /**
      * Returns all the markers associated to the specified item.
      */
-    private List<IMarker> getMarkers(Item item) {
+    private List<IMarker> getMarkers(Item item) throws SystemException, CoreException {
         final ITalendSynchronizer synchronizer = getSynchronizer(item);
 
-        try {
-            return Arrays.asList(synchronizer.getFile(item).findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
-        } catch (SystemException | CoreException e) {
-            throw new IllegalStateException("Error while accessing markers.", e);
-        }
+        return Arrays.asList(synchronizer.getFile(item).findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
     }
 }
