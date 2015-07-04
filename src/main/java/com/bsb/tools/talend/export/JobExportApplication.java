@@ -2,6 +2,8 @@ package com.bsb.tools.talend.export;
 
 import static com.bsb.tools.talend.export.ArgumentUtils.*;
 import static com.bsb.tools.talend.export.BuildResultPrintHandler.printIssuesOn;
+import static com.bsb.tools.talend.export.JobExporterConfigBuilder.toArchiveFile;
+import static com.bsb.tools.talend.export.Workspace.initializeWorkspace;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -17,10 +19,10 @@ public class JobExportApplication implements IApplication {
     @Override
     public Object start(IApplicationContext iApplicationContext) throws Exception {
         try {
-            return Workspace.initializeWorkspace()
+            return initializeWorkspace()
                   .useProject(getMandatoryParameterValue(iApplicationContext, "projectName"))
                   .export(
-                        JobExporterConfigBuilder.toArchiveFile(getMandatoryParameterValue(iApplicationContext, "targetFile"))
+                        toArchiveFile(getMandatoryParameterValue(iApplicationContext, "targetFile"))
                               .jobsWithLabelMatching(getMandatoryParameterValue(iApplicationContext, "jobsToExport"))
                               .needSystemRoutine()
                               .needUserRoutine()

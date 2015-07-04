@@ -7,6 +7,7 @@ import org.eclipse.equinox.app.IApplicationContext;
  *
  * @author Sebastien Gerard
  */
+// TODO use standard library commons-cli
 public final class ArgumentUtils {
 
     private ArgumentUtils() {

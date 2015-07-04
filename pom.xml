@@ -95,6 +95,7 @@
                             <Bundle-Name>BuildJob Plug-in</Bundle-Name>
                             <Bundle-SymbolicName>com.bsb.solife;singleton:=true</Bundle-SymbolicName>
                             <Bundle-Version>1.0.0.qualifier</Bundle-Version>
+                            <!--TODO use Tycho plugin instead-->
                             <Require-Bundle>org.eclipse.core.runtime,
                                 org.eclipse.ui.ide,
                                 org.eclipse.ui.console,
