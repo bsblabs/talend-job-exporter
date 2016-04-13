@@ -22,6 +22,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.RepositoryFactoryProvider;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.actions.importproject.ImportProjectsUtilities;
+import org.talend.core.model.properties.impl.PropertiesFactoryImpl;
 
 /**
  * Bunch of utility methods handling a {@link RepositoryContext}.
@@ -131,7 +132,7 @@ public final class Workspace {
      * Returns a new talend User as used by default in TOS DI.
      */
     private static User createUser() {
-        final User user = PropertiesFactory.eINSTANCE.createUser();
+        final User user = PropertiesFactoryImpl.init().createUser();
 
         user.setLogin("test@talend.com");
 

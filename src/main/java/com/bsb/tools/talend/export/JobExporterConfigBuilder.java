@@ -19,22 +19,25 @@ public final class JobExporterConfigBuilder {
     private final String destinationFile;
     private final Map<ExportChoice, Object> exportChoiceMap;
     private String jobsToExport = "[0-9a-zA-Z]*";
+	private String versionToExport = "Latest";
+	private String contextName;
 
     private JobExporterConfigBuilder(String destinationFile) {
         this.destinationFile = destinationFile;
 
         this.exportChoiceMap = new EnumMap<>(ExportChoice.class);
-        this.exportChoiceMap.put(ExportChoice.needLauncher, false);
-        this.exportChoiceMap.put(ExportChoice.needSystemRoutine, false);
-        this.exportChoiceMap.put(ExportChoice.needUserRoutine, false);
-        this.exportChoiceMap.put(ExportChoice.needTalendLibraries, false);
-        this.exportChoiceMap.put(ExportChoice.needJobItem, false);
-        this.exportChoiceMap.put(ExportChoice.needJobScript, false);
-        this.exportChoiceMap.put(ExportChoice.needSourceCode, false);
-        this.exportChoiceMap.put(ExportChoice.needContext, false);
-        this.exportChoiceMap.put(ExportChoice.applyToChildren, false);
-        this.exportChoiceMap.put(ExportChoice.needDependencies, false);
-        this.exportChoiceMap.put(ExportChoice.setParameterValues, false);
+        exportChoiceMap.put(ExportChoice.needLauncher, true);
+        exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
+        exportChoiceMap.put(ExportChoice.needUserRoutine, true);
+        exportChoiceMap.put(ExportChoice.needTalendLibraries, true);
+        exportChoiceMap.put(ExportChoice.needJobItem, true);
+        exportChoiceMap.put(ExportChoice.needJobScript, true);
+        exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.needSourceCode, false);
+        exportChoiceMap.put(ExportChoice.applyToChildren, false);
+        exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
+        exportChoiceMap.put(ExportChoice.needDependencies, true);
+
     }
 
     /**
@@ -135,11 +138,34 @@ public final class JobExporterConfigBuilder {
 
         return this;
     }
+	
+	/**
+	*
+	*
+	*/
+	public JobExporterConfigBuilder setVersion(String version)
+	{
+		if(version != null && !"".equals(version.trim())) {
+			this.versionToExport = version.trim();	
+		}
+		return this;
+	}
+	
+	public JobExporterConfigBuilder setContext(String contextName)
+	{
+		if(contextName != null && !"".equals(contextName.trim()))
+		{
+			this.contextName = contextName.trim();
+		}
+		return this;
+	}
+	
+	
 
     /**
      * Builds a new jobs exporter based on the configuration specified so far.
      */
     public JobExporterConfig build() {
-        return new JobExporterConfig(destinationFile, exportChoiceMap, jobsToExport);
+        return new JobExporterConfig(destinationFile, exportChoiceMap, jobsToExport, versionToExport, contextName);
     }
 }

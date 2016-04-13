@@ -18,7 +18,14 @@ public class JobExportApplication implements IApplication {
 
     @Override
     public Object start(IApplicationContext iApplicationContext) throws Exception {
+		String version = getParameterValue(iApplicationContext, "version");
+		if(version == null) version = "Latest";
+		String contextName = getParameterValue(iApplicationContext, "context");
+		if(contextName == null) contextName = "Default";
+		
+		
         try {
+			
             return initializeWorkspace()
                   .useProject(getMandatoryParameterValue(iApplicationContext, "projectName"))
                   .export(
@@ -29,6 +36,8 @@ public class JobExportApplication implements IApplication {
                               .needTalendLibraries()
                               .needJobScript()
                               .needDependencies()
+							  .setVersion(version)
+							  .setContext(contextName)
                   )
                   .doOnResult(
                         printIssuesOn(System.err)
