@@ -23,10 +23,18 @@ Example exporting all "Extractions" jobs (for instance "Extractions/fromComponen
 C:\tools\talend\6.1.1\TOS_DI-win-x86_64.exe -nosplash -data C:\projects\trunk\com.bsb.myProject.transformation\src\main\talend -application com.bsb.tools.talend.export.JobExportApplication -targetFile C:\projects\trunk\com.bsb.myProject.transformation\target\Extractions.zip -projectName MY_PROJECT_TRANSFORMATION -jobsToExport "Extractions/[0-9a-zA-Z]*" -clean
 ``
 
+## How to build
 
-## Dependencies
+* Checkout this repository to a local directory.
+* Make sure you can execute `mvn` on your command line.
 
-Dependencies declared in _pom.xml_ are based on the libraries defined in the Talend TOS DI 6.1.1 distribution (in the "plugins" directory). Dependencies can be installed on your local Maven repository with the [install-file Maven command](https://maven.apache.org/plugins/maven-install-plugin/examples/specific-local-repo.html).
+* The `org.talend.repository_6.1.1.20151214_1327.jar`  have to be installed in your local Maven 
+repository. 
+See [install-file Maven command](https://maven.apache.org/plugins/maven-install-plugin/examples/specific-local-repo.html)  for more details about the install-file Maven command e.g.:
+
+`mvn install:install-file -Dfile=plugins\org.talend.repository_6.1.1.20151214_1327.jar -DgroupId=org.talend.studio -DartifactId=org.talend.repository -Dversion=6.1.1 -Dpackaging=jar`
+
+ * Build the plugin with the `mvn clean install` command. 
 
 
 ## Install the plugin

@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=plugins\org.talend.repository_6.1.1.20151214_1327.jar -DgroupId=org.talend.studio -DartifactId=org.talend.repository -Dversion=6.1.1 -Dpackaging=jar
