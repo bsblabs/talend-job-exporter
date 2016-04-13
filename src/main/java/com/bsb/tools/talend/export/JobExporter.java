@@ -20,6 +20,7 @@ import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 
 /**
  * Service responsible of exporting jobs into an archive file.
@@ -36,8 +37,9 @@ public class JobExporter {
      * on the specified choices.
      */
     JobExporter(JobExporterConfig jobExporterConfig) {
-        this.jobExporterConfig = jobExporterConfig;
-        this.manager = new JobJavaScriptsManager(jobExporterConfig.getChoices(), "Default", "All", -1, -1);
+        this.jobExporterConfig = jobExporterConfig;	
+		 //return new JobJavaScriptsManager(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
+        this.manager = new JobJavaScriptsManager(jobExporterConfig.getChoices(), jobExporterConfig.getContextName(), JobScriptsManager.ALL_ENVIRONMENTS, -1, -1);
         this.manager.setDestinationPath(jobExporterConfig.getDestinationFile());
         this.manager.setTopFolderName(new File(this.manager.getDestinationPath()).getName());
     }
@@ -55,7 +57,7 @@ public class JobExporter {
             final Job job = CorePlugin.getDefault().getCodeGeneratorService().initializeTemplates();
             job.join();
 
-            final JobExportAction jobExportAction = new JobExportAction(nodes, "0.1", this.manager, null, "Job"); // TODO support versioning
+            final JobExportAction jobExportAction = new JobExportAction(nodes, this.jobExporterConfig.getVersion(), this.manager, null, "Job"); // TODO support versioning
 
             jobExportAction.run(new NullProgressMonitor());
 
@@ -87,13 +89,13 @@ public class JobExporter {
     private ITalendSynchronizer getSynchronizer(Item item) {
         ITalendSynchronizer synchronizer = CorePlugin.getDefault().getCodeGeneratorService().createRoutineSynchronizer();
 
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(ICamelDesignerCoreService.class)) {
+        /*if (GlobalServiceRegister.getDefault().isServiceRegistered(ICamelDesignerCoreService.class)) {
             ICamelDesignerCoreService service = (ICamelDesignerCoreService) GlobalServiceRegister.getDefault()
                   .getService(ICamelDesignerCoreService.class);
             if (service.isInstanceofCamel(item)) {
                 synchronizer = CorePlugin.getDefault().getCodeGeneratorService().createCamelBeanSynchronizer();
             }
-        }
+        }*/
 
         return synchronizer;
     }

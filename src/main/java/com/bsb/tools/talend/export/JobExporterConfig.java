@@ -14,11 +14,15 @@ public class JobExporterConfig {
     private final String destinationFile;
     private final Map<ExportChoice, Object> choices;
     private final String jobsToExport;
+	private String versionToExport;
+	private String contextName;
 
-    public JobExporterConfig(String destinationFile, Map<ExportChoice, Object> choices, String jobsToExport) {
+    public JobExporterConfig(String destinationFile, Map<ExportChoice, Object> choices, String jobsToExport, String version, String contextName) {
         this.destinationFile = destinationFile;
         this.choices = choices;
         this.jobsToExport = jobsToExport;
+		this.versionToExport = version;
+		this.contextName = contextName;
     }
 
     public String getDestinationFile() {
@@ -32,4 +36,13 @@ public class JobExporterConfig {
     public String getJobsToExport() {
         return jobsToExport;
     }
+	
+	public String getVersion(){
+		return versionToExport;
+	}
+	
+	public String getContextName()
+	{
+		return contextName;
+	}
 }
